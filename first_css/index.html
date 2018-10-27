@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>气泡</title>
+	<style>
+		@keyframes myframe{
+			0%{
+				transform:translate(20px,20px);
+			}
+
+			50%{
+				transform:scale(0.8);
+			}
+
+			100%{
+				transform:translate(50px,40px);
+			}
+		}
+		#container{
+			width:100%;
+			height:100%;
+		}
+		.shape{
+			position :absolute;
+			overflow:hidden;
+			animation : myframe 5s infinite;
+			border-radius:50%;
+		}
+	</style>
+	<script>
+		function circle(contain){
+			var div=document.createElement('div');
+			var x=Math.floor(Math.random()*500);
+			var y=Math.floor(Math.random()*500);
+			var width=Math.floor(Math.random()*200);
+			var height=width;
+			var opacity=Math.random();
+			var a=Math.floor(Math.random()*256);
+			var b=Math.floor(Math.random()*256);
+			var c=Math.floor(Math.random()*256);
+			var mystyle="width:"+width+"px;"+"height:"+height+"px;"+"left:"+x+"px;"+"top:"+y+"px;"+"opacity:"
+			+opacity+";"+"background:rgb("+a+","+b+","+c+");";
+			div.setAttribute('style',mystyle);
+			//增加一个指定名称和治的新属性，或者把一个现有属性设定为指定的值
+			div.className='shape';
+			// console.log(x,y,radius);
+			// document.write("111");
+			contain.appendChild(div);
+		}
+		window.onload=function(){
+			var contain=document.getElementById('container');
+			for(var i=0;i<20;i++)
+				circle(contain);
+		}
+	</script>
+</head>
+<body>
+	<div id="container">
+	</div>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE>
+<html>
+<head>
+	<meta http-equiv="content-type" content="html/text" charset="UTF-8">
+	<title>尝试贪吃蛇</title>
+
+	<style type="text/css">
+
+		#han{
+			margin:20px;  //上边距
+		padding:20px;	//内边距
+		background-color:#FFFFFF;
+			border:thin inset #AAAAAA;
+		}
+	</style>
+
+	<script>
+		//画食物
+		function setFood(){
+			ctx.fillRect(food.x,food.y,10,10);
+		}
+		//判断是否吃到食物
+		function eat(){
+			var head = set[0];
+			if(head.x == food.x && head.y == food.y)
+				return true;
+			return false;
+		}
+		//判断是否撞墙或撞自己
+		function against(){
+			if( set[0].x<=0 || set[0].y<=0 || set[0].x>=500 || set[0].y>=500)
+				return false;
+			var head = set[0];
+			for(var i=1;i<set.length;i++){
+				if(head.x == set[i].x && head.y == set[i].y)
+					return false;
+			}
+			return true;
+		}
+		//画蛇,按数组中的数据绘制出蛇的位置
+		function setsnake(){
+			for(var i=0;i<set.length;i++){
+				ctx.fillRect(set[i].x,set[i].y,10,10);
+			}
+		}
+		//更新位置,头部四个不同的移动方法
+		//向右移动
+		function refresh(dir){
+			var head = set[0];
+			switch(dir.flag){
+				case 37: set[0]={"x":head.x-10,"y":head.y};break;
+				case 38: set[0]={"x":head.x,"y":head.y-10};break;
+				case 39: set[0]={"x":head.x+10,"y":head.y};break;
+				case 40: set[0]={"x":head.x,"y":head.y+10};break;
+				default : break;
+			}
+			move(head);
+		}
+		//方向改变后，修改数组中的数据,循环让下一节的位置等于上一节来移动身体
+		function move(pre){
+			var temp;
+			for(var i=1;i<set.length;i++){
+				temp = set[i];
+				set[i] = pre;
+				pre = temp;
+			}
+		}
+	</script>
+
+</head>
+
+<body>
+<canvas id = "han" width="500" height="500"> 你的浏览器不支持canvas</canvas>
+
+<script>
+
+	/**
+	 *不再尝试使用pop及unshift，只需改变蛇头坐标，其后每一个都更新自己的坐标为上一点坐标
+	 */
+		//初始化,设定变量及位置
+		//flag（方向）
+	var dir={"flag":39};
+
+	//set内包含两个值，x，y
+	var set = [
+		{"x":10,"y":50},
+		{"x":0,"y":50}
+	];
+
+	//画布及画笔
+	var canvas = document.getElementById("han");
+	var ctx = canvas.getContext("2d");
+
+	//食物的位置
+	var food = {"x":Math.floor(Math.random()*50) * 10,
+		"y":Math.floor(Math.random()*50) * 10
+	};
+
+	//分数
+	var score = 0;
+
+	//主程序
+	function main(){
+
+		score = 0;
+		ctx.shadowBlur = 20;
+		ctx.shadowColor = "gray";
+
+		//位置信息
+		console.log("set[0]:"+set[0].x+" : "+set[0].y);
+		console.log("set[1]:"+set[1].x+" : "+set[1].y);
+
+
+		//蛇的移动
+		var loop=setInterval( function(){
+			ctx.clearRect(0,0,500,500);
+
+			setsnake();
+			// 判断撞墙或撞自己
+			if(! against()){
+				clearInterval(loop);
+				alert("you lose! you got :"+score);
+			}
+
+			setFood();
+
+			//吃到食物,变长，加分，更新食物位置
+			if( eat() ){
+				//倒一
+				var last = set[set.length - 1];
+				//倒二
+				var plast = set[set.length - 2];
+
+				// px = last.x-plast.x;
+				// py = last.y-plast.y;
+
+				var tail = {"x":last.x+10 , "y":last.y+10};
+				set.push(tail);
+
+				//加分
+				score++;
+				document.getElementById("score").innerHTML = score;
+
+				//更新食物位置
+				food.x=Math.floor(Math.random()*50) * 10;
+				food.y=Math.floor(Math.random()*50) * 10;
+			}
+
+			refresh(dir);
+		},200);
+
+	}
+
+	//响应键盘
+	document.onkeyup = function(event){
+		var e =event.keyCode;
+
+		if(Math.abs(e - dir.flag )!=2 && e>=37 && e<=40 )
+			dir.flag = e;
+
+	}
+
+</script>
+
+
+<button onclick="main()" >begin</button>
+<p>your score :<span id="score">0</span> </p>
+</body>
+
+</html>
